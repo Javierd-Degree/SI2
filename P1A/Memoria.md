@@ -28,15 +28,15 @@ TODO: Explicar que es cada parametro de la captura.
 
 ### Ejercicio 4
 Buscamos el código dentro del fichero VisaDAO.java:
-El método para comprobar si una tarjeta es válida se encuentra en la función `public boolean compruebaTarjeta(TarjetaBean tarjeta)`, en la línea 133. Dentro de este método, en función de si se utiliza un prepared statement o no, se usa el código SQL incluido en `SELECT_TARJETA_QRY` o `getQryCompruebaTarjeta(tarjeta);`
-java```
+El método para comprobar si una tarjeta es válida se encuentra en la función `public boolean compruebaTarjeta(TarjetaBean tarjeta)`, en la línea 133. Dentro de este método, en función de si se utiliza un prepared statement o no, se usa el código SQL incluido en `SELECT_TARJETA_QRY` o `getQryCompruebaTarjeta(tarjeta);` respectivamente.
+```java
 private static final String SELECT_TARJETA_QRY =
-                "select * from tarjeta " +
-                "where numeroTarjeta=? " +
-                " and titular=? " +
-                " and validaDesde=? " +
-                " and validaHasta=? " +
-                " and codigoVerificacion=? ";
+    "select * from tarjeta " +
+    "where numeroTarjeta=? " +
+    " and titular=? " +
+    " and validaDesde=? " +
+    " and validaHasta=? " +
+    " and codigoVerificacion=? ";
 
 String getQryCompruebaTarjeta(TarjetaBean tarjeta) {
     String qry = "select * from tarjeta "
@@ -51,5 +51,27 @@ String getQryCompruebaTarjeta(TarjetaBean tarjeta) {
 
 
 
-El método para ejecutar el pago, se encuentra en la función `public synchronized boolean realizaPago(PagoBean pago)`, en la línea 206.
-En ninguna de las funciones se incluye código SQL de forma directa, se crean preparedStatements
+El método para ejecutar el pago, se encuentra en la función `public synchronized boolean realizaPago(PagoBean pago)`, en la línea 206. Al igual que en la función comentada anteriormente, se utiliza el código SQL incluido en `INSERT_PAGOS_QRY` en el caso de que el query se ejecute como prepared statement, o bien la función `getQryInsertPago(pago)` en aso contrario.
+```java
+private static final String INSERT_PAGOS_QRY =
+    "insert into pago(" +
+    "idTransaccion,importe,idComercio,numeroTarjeta)" +
+    " values (?,?,?,?)";
+
+String getQryInsertPago(PagoBean pago) {
+    String qry = "insert into pago("
+                + "idTransaccion,"
+                + "importe,idComercio,"
+                + "numeroTarjeta)"
+                + " values ("
+                + "'" + pago.getIdTransaccion() + "',"
+                + pago.getImporte() + ","
+                + "'" + pago.getIdComercio() + "',"
+                + "'" + pago.getTarjeta().getNumero() + "'"
+                + ")";
+    return qry;
+}
+```
+### Ejercicio 5
+Dentro de VisaDAO.java, se llama a `errorLog` en las funciones `compruebaTarjeta`, `realizaPago`, `getPagos` y `delPagos` para distinguir entre las distintas posibilidades de cada función (si se usa o no un prepared statement, o si falla). Una vez entramos en `http://10.1.2.1:8080/P1/testbd.jsp` y ejecutamos un pago con la opción debug activada, entramos de nuevo en el log del servidor y podemos apreciar información extra sobre los queries que se han hecho en los campos de detail.
+![](Ej5_Logs.png)
