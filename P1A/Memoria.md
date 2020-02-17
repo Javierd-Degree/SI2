@@ -2,12 +2,20 @@
 
 En primer lugar, modificamos los archivos build.propierties y postgresql.properties usando nuestra ip 10.1.2.1, junto con la contraseña alumnodb de la base de datos.
 Una vez hecho esto, iniciamos la máquina virtual y el servidor de glassfish, y usando ant y build.xml desplegamos la aplicación mediante los comandos compilar, empaquetar, desplegar y regenerar-bd.
-Abrimos Tora y comprobamos que inicialmente la base de datos está vacía:ç+
+Abrimos Tora y comprobamos que inicialmente la base de datos está vacía:
+
 ![](./Ej1_DB_Vacia.png)
+
+
+
 Una vez realizamos un pago, el servidor nos devuelve el comprobante y en la base de datos aparece:
+
 ![](Ej1_Comprobante.png)
 ![](Ej1_DB_Llenaç.png)
-Borramos y obtenbemos:
+
+
+
+Borramos y obtenemos:
 ![](Ej1_DB_Borrada_Web.png)
 ![](EJ1_DB_Borrada_Tora.png)
 
@@ -75,3 +83,17 @@ String getQryInsertPago(PagoBean pago) {
 ### Ejercicio 5
 Dentro de VisaDAO.java, se llama a `errorLog` en las funciones `compruebaTarjeta`, `realizaPago`, `getPagos` y `delPagos` para distinguir entre las distintas posibilidades de cada función (si se usa o no un prepared statement, o si falla). Una vez entramos en `http://10.1.2.1:8080/P1/testbd.jsp` y ejecutamos un pago con la opción debug activada, entramos de nuevo en el log del servidor y podemos apreciar información extra sobre los queries que se han hecho en los campos de detail.
 ![](Ej5_Logs.png)
+
+
+
+### Ejercicio 6
+
+Para modificar la función *realizaPago* de modo que devuelva el pago modificado o *null*, hemos tenido que cambiar:
+
+- La línea de declaración de la función, indicando que en vez de un *boolean* devuelve un *PagoBean*.
+
+- La variable *ret* de la función, para que sea de tipo *PagoBean*. Una vez hecho esto, cambiamos todas las asignaciones de la forma `ret = XXX;`, de modo que cuando `XXX` es *false*, lo cambiamos por *null*, y cuando es *true*, lo cambiamos por *pago*, la variable de entrada de la función. 
+
+  De esta forma, al ser correcto el pago, este se actualiza directamente, y como *ret* apunta al objeto *pago*, la función devuelve el *PagoBean* con la información actualizada.
+
+Se altera el parámetro de retorno para que el cliente ser Web Service pueda tener y usar la información del id de autorización y el código de respuesta directamente, sin necesidad de hacer otra petición distinta al servidor, agilizando así el procedimiento.
