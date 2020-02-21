@@ -92,8 +92,67 @@ Para modificar la función *realizaPago* de modo que devuelva el pago modificado
 
 - La línea de declaración de la función, indicando que en vez de un *boolean* devuelve un *PagoBean*.
 
-- La variable *ret* de la función, para que sea de tipo *PagoBean*. Una vez hecho esto, cambiamos todas las asignaciones de la forma `ret = XXX;`, de modo que cuando `XXX` es *false*, lo cambiamos por *null*, y cuando es *true*, lo cambiamos por *pago*, la variable de entrada de la función. 
+- La variable *ret* de la función, para que sea de tipo *PagoBean*. Una vez hecho esto, cambiamos todas las asignaciones de la forma `ret = XXX;`, de modo que cuando `XXX` es *false*, lo cambiamos por *null*, y cuando es *true*, lo cambiamos por *pago*, la variable de entrada de la función.
 
   De esta forma, al ser correcto el pago, este se actualiza directamente, y como *ret* apunta al objeto *pago*, la función devuelve el *PagoBean* con la información actualizada.
 
 Se altera el parámetro de retorno para que el cliente ser Web Service pueda tener y usar la información del id de autorización y el código de respuesta directamente, sin necesidad de hacer otra petición distinta al servidor, agilizando así el procedimiento.
+
+### Ejercicio 7
+
+
+### Ejercicio 8
+
+Las modificaciones que hemos tenido que realizar han sido:
+- Añadir los imports necesarios para poder usar el servicio remoto:
+```java
+import ssii2.visa.VisaDAOWSService; // Stub generado automáticamente
+import ssii2.visa.VisaDAOWS; // Stub generado automáticamente
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.BindingProvider;
+```
+y eliminar el anterior import de VisaDAO.
+- Inicializar el nuevo VisaDAOWS mediante el código:
+```java
+VisaDAOWSService service = new VisaDAOWSService();
+VisaDAOWS dao = service.getVisaDAOWSPort();
+```
+- A la hora de comprobar el resultado de la función *realizaPago*, usar:
+```java
+dao.realizaPago(pago) == null
+```
+- Por último, añadimos la clase `WebServiceException` al *throws* del método.
+
+
+### Ejercicio 9
+
+### Ejercicio 10
+Realizamos en *delPagos.java* y *GetPagos.java* las mismas modificaciones que en el ejercicio 8, y el código es el siguiente:
+*DelPagos.java*
+![](Ej10_1.png)
+*GetPagos.java*, añadimos también el paso a Array de `dao.getPagos(idComercio)`
+![](Ej10_2.png)
+Modificamos además el archivo *VisaDAOWS.java* para que los métodos *getPagos* y *delPagos* sean servicios web, y para que
+el método *getPagos* devuelva un objeto de clase *ArrayList<PagoBean>* en vez de un *PagoBean[]*, haciendo que se devuelva la variable *pagos* que ya estaba inicializada y usada en la función.
+Ha sido necesario además importar la clase *java.util.ArrayList;* dentro de *GetPagos.java*.
+![](Ej10_3_1.png)
+![](Ej10_3_2.png)
+![](Ej10_4.png)
+
+### Ejercicio 11
+Usamos el comando `wsimport -d build/client/WEB-INF/classes -p ssii2.visa http://10.1.2.2:8080/P1-ws-ws/VisaDAOWSService?wsdl`.
+Una vez ejecutado el comando, las clases generadas son las mostradas en la siguiente captura de pantalla. Se generan por estar especificadas en el archivo *VisaDAOWSService*, pues son necesarias para que el cliente pueda hacer uso de dichas clases del servidor. **TODO: EXPLICAR BIEN**.
+![](Ej11.png)
+
+### Ejercicio 12
+El código añadido al target *generar-stubs* de *build.xml* para que se añadan las clases y objetos necesarios automáticamente es:
+```xml
+<exec executable="wsimport">
+  <arg value="-d"/>
+  <arg value="${build.client}/WEB-INF/classes"/>
+  <arg value="-p"/>
+  <arg value="${paquete}.visa"/>
+  <arg value="http://10.1.2.2:8080/P1-ws-ws/VisaDAOWSService?wsdl"/>
+</exec>
+```

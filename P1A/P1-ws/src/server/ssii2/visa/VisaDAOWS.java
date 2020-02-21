@@ -1,6 +1,6 @@
 /**
  * Pr&aacute;ctricas de Sistemas Inform&aacute;ticos II
- * 
+ *
  * Implementacion de la interfaz de VISA utilizando como backend
  * una base de datos.
  * Implementa dos modos de acceso (proporcionados por la clase DBTester):
@@ -28,7 +28,7 @@ import javax.jws.WebService;
  * @author jaime
  */
 @WebService()
-public class VisaDAO extends DBTester {
+public class VisaDAOWS extends DBTester {
 
     private boolean debug = false;
 
@@ -77,11 +77,11 @@ public class VisaDAO extends DBTester {
                     " and idComercio = ?";
     /**************************************************/
 
-    
+
     /**
-     * Constructor de la clase     
+     * Constructor de la clase
      */
-    public VisaDAO() {
+    public VisaDAOWS() {
         return;
     }
 
@@ -98,7 +98,7 @@ public class VisaDAO extends DBTester {
                     + "' and codigoVerificacion='" + tarjeta.getCodigoVerificacion() + "'";
         return qry;
     }
-    
+
     /**
      *  getQryInsertPago
      */
@@ -135,8 +135,7 @@ public class VisaDAO extends DBTester {
      * @return true si la comprobacion contra las tarjetas contenidas en
      *         en la tabla TARJETA fue satisfactoria, false en caso contrario     */
     @WebMethod(operationName = "compruebaTarjeta")
-    @WebParam(name = "tarjeta")
-    public boolean compruebaTarjeta(TarjetaBean tarjeta) {
+    public boolean compruebaTarjeta(@WebParam(name = "tarjeta") TarjetaBean tarjeta) {
         Connection con = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -165,7 +164,7 @@ public class VisaDAO extends DBTester {
                pstmt.setString(3, tarjeta.getFechaEmision());
                pstmt.setString(4, tarjeta.getFechaCaducidad());
                pstmt.setString(5, tarjeta.getCodigoVerificacion());
-               rs = pstmt.executeQuery();               
+               rs = pstmt.executeQuery();
 
             } else {
             /**************************************************/
@@ -175,7 +174,7 @@ public class VisaDAO extends DBTester {
             rs = stmt.executeQuery(qry);
 
             } /**********************/
-            
+
             /* Si hay siguiente registro, la tarjeta valido OK */
             ret = rs.next();
 
@@ -205,13 +204,12 @@ public class VisaDAO extends DBTester {
     }
 
     /**
-     * Realiza el pago 
+     * Realiza el pago
      * @param pago
      * @return
      */
     @WebMethod(operationName = "realizaPago")
-    @WebParam(name = "pago")
-    public synchronized PagoBean realizaPago(PagoBean pago) {
+    public synchronized PagoBean realizaPago(@WebParam(name = "pago") PagoBean pago) {
         Connection con = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -253,7 +251,7 @@ public class VisaDAO extends DBTester {
                  ret = pago;
                }
 
-            } else {            
+            } else {
             /**************************************************/
             stmt = con.createStatement();
             String insert = getQryInsertPago(pago);
@@ -266,7 +264,7 @@ public class VisaDAO extends DBTester {
             }/****************/
 
             // Obtener id.autorizacion
-            if (ret) {                
+            if (ret != null) {
 
                 /* TODO Permitir usar prepared statement si
                  * isPrepared() = true */
@@ -284,7 +282,7 @@ public class VisaDAO extends DBTester {
                     String select = getQryBuscaPagoTransaccion(pago);
                     errorLog(select);
                     rs = stmt.executeQuery(select);
-                    
+
                 }/*************************************/
                 if (rs.next()) {
                     pago.setIdAutorizacion(String.valueOf(rs.getInt("idAutorizacion")));
@@ -325,12 +323,11 @@ public class VisaDAO extends DBTester {
      * @param idComercio
      * @return
      */
-    public PagoBean[] getPagos(String idComercio) {
-
+    @WebMethod(operationName = "getPagos")
+    public ArrayList<PagoBean> getPagos(@WebParam(name = "idComercio") String idComercio) {
         PreparedStatement pstmt = null;
         Connection pcon = null;
         ResultSet rs = null;
-        PagoBean[] ret = null;
         ArrayList<PagoBean> pagos = null;
         String qry = null;
 
@@ -365,9 +362,6 @@ public class VisaDAO extends DBTester {
                 pagos.add(p);
             }
 
-            ret = new PagoBean[pagos.size()];
-            ret = pagos.toArray(ret);
-
             // Cerramos / devolvemos la conexion al pool
             pcon.close();
 
@@ -389,7 +383,7 @@ public class VisaDAO extends DBTester {
             }
         }
 
-        return ret;
+        return pagos;
     }
 
     // Borrar los pagos asociados a un comercio
@@ -398,7 +392,8 @@ public class VisaDAO extends DBTester {
      * @param idComercio
      * @return numero de registros afectados
      */
-    public int delPagos(String idComercio) {
+    @WebMethod(operationName = "delPagos")
+    public int delPagos(@WebParam(name = "idComercio") String idComercio) {
 
         PreparedStatement pstmt = null;
         Connection pcon = null;
@@ -454,8 +449,7 @@ public class VisaDAO extends DBTester {
     }
 
     @WebMethod(operationName = "setPrepared")
-    @WebParam(name = "prepared")
-    public void setPrepared(boolean prepared) {
+    public void setPrepared(@WebParam(name = "prepared") boolean prepared) {
         this.prepared = prepared;
     }
     /********************************************************/
@@ -471,7 +465,7 @@ public class VisaDAO extends DBTester {
     /**
      * @param debug the debug to set
      */
-    @WebMethod(exlude = true)
+    @WebMethod(exclude=true)
     public void setDebug(boolean debug) {
         this.debug = debug;
     }
@@ -480,8 +474,7 @@ public class VisaDAO extends DBTester {
      * @param debug the debug to set
      */
     @WebMethod(operationName = "setDebug")
-    @WebParam(name = "debug")
-    public void setDebug(String debug) {
+    public void setDebug(@WebParam(name="debug") String debug) {
         this.debug = (debug.equals("true"));
     }
 
@@ -510,8 +503,7 @@ public class VisaDAO extends DBTester {
      */
     @Override
     @WebMethod(operationName = "setDirectConnection")
-    @WebParam(name = "directConnection")
-    public void setDirectConnection(boolean directConnection) {
+    public void setDirectConnection(@WebParam(name = "directConnection") boolean directConnection) {
         super.setDirectConnection(directConnection);
     }
 
