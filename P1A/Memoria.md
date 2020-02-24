@@ -100,7 +100,6 @@ Se altera el parámetro de retorno para que el cliente ser Web Service pueda ten
 
 ### Ejercicio 7
 
-
 ### Ejercicio 8
 
 Las modificaciones que hemos tenido que realizar han sido:
@@ -156,3 +155,19 @@ El código añadido al target *generar-stubs* de *build.xml* para que se añadan
   <arg value="http://10.1.2.2:8080/P1-ws-ws/VisaDAOWSService?wsdl"/>
 </exec>
 ```
+
+### Ejercicio 13
+Antes de realizar ningún pago en la aplicación, probamos a ejecutar la consulta:
+`SELECT * FROM pago`
+y comprobamos que no hay pagos realizados pues la salida está vacía.
+![](13_pago_antes.png)
+
+Realizamos un pago.
+![](13_pago_realizado.png)
+
+y realizamos de nuevo la misma consulta.
+![](13_despues_pago.png)
+
+Observamos que, en este caso, si obenemos una salida, que es la correspondiente al pago que acabamos de realizar. Por tanto, el sistema funciona correctamente.
+
+### Cuestiones
