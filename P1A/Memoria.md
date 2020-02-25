@@ -31,28 +31,47 @@ Borramos y obtenemos:
 
 ![](EJ1_DB_Borrada_Tora.png)
 
+El funcionamiento de la aplicacción al realizar estas acciones es el esperado, por tanto el sistema funciona correctamente.
 
 ### Ejercicio 2
 
 Para la conexion directa, modificamos JDBC_DRIVER  JDBC_CONNSTRING JDBC_USER y JDBC_PASSWORD de DBTester.java como indica el apéndice 10, replegamos la base de datos y ejecutamos el todo de build.xml.
 
+Ahora realizamoos un pago:
+
 ![](Ej2_Pago.png)
+
+Listamos los pagos y comprobamos que aparece el pago que acabamos de realizar:
 
 ![](Ej2_Listado.png)
 
+Eliminamos el pago:
+
 ![](Ej2_Borrado.png)
+
+Por último listamos los pagos del comercio de nuevo, y observamos que el pago que hemos eliminado no aparece:
 
 ![](Ej2_ListadoBorrado.png)
 
+El comportamiento del sistema al realizar estas actividades es el esperado, lo que nos lleva a la conclusión de que los parámetros introducidos para establecer la conexión directa con la base de datos son correctos.
+
 ### Ejercicio 3
+
 Entramos en la consola de administración de glassfish y comprobamos los rescursos JDBC y el Pool de conexiones, obteniendo lo siguiente:
 
-
-
 ![](EJ3_JDBCResources.png)
+
 ![](EJ3_JDBCPool.png)
+
 ![](Ej3_Ping.png)
 
+Al realizar el ping, este es exitoso, por tanto vemos que la conexión con la base de datos funciona correctamente.
+
+Cabe destacar que los parámetros Initial pool size y máximun pool size definen el número máximo de conexiones simultáneas que puede haber en un momento dado con la base de datos. Esto reprecute en el número de peticiones de los clientes que podrán ser satisfechas a la vez de forma paralela, y por tanto, afecta a la velocidad en que estas se responden.
+
+Pool resize quantity e idle timeout son parámetros que definen como se comportará el pool ante cuando se cumple un cierto tiempo sin que se emplee una conexión con la base de datos. Cuando pasa el tiempo especificado en idle time sin emplear una conexión, el sistema eliminará 2 conexiones del pool (las especificadas en pool resize quantity), siempre que queden activas más conexiones que las mínimas especificadas en el initial pool size.
+
+Por último el max wait time indica el tiempo máximo de espera que tiene la petición de un cliente antes de expirr. Esto quiere decir que si pasa este tiempo sin ser procesada la petición, esta expira, y por tanto no será procesada. Esto contribuye a evitar la congestión del sistem con peticiones irresolubles o excesivamente costosas.
 
 ### Ejercicio 4
 
@@ -106,6 +125,8 @@ String getQryInsertPago(PagoBean pago) {
 Dentro de VisaDAO.java, se llama a `errorLog` en las funciones `compruebaTarjeta`, `realizaPago`, `getPagos` y `delPagos` para distinguir entre las distintas posibilidades de cada función (si se usa o no un prepared statement, o si falla). Una vez entramos en `http://10.1.2.1:8080/P1/testbd.jsp` y ejecutamos un pago con la opción debug activada, entramos de nuevo en el log del servidor y podemos apreciar información extra sobre los queries que se han hecho en los campos de detail.
 ![](Ej5_Logs.png)
 
+Como era de esperar, en el log observamos información acerca de los queries añadidos en VisaDAO.java.
+
 
 ### Ejercicio 6
 
@@ -119,10 +140,11 @@ Para modificar la función *realizaPago* de modo que devuelva el pago modificado
 
 Se altera el parámetro de retorno para que el cliente ser Web Service pueda tener y usar la información del id de autorización y el código de respuesta directamente, sin necesidad de hacer otra petición distinta al servidor, agilizando así el procedimiento.
 
-
 ### Ejercicio 7
 
-Los tipos de dato intercambiados con el web services se encuentran definidos en el fichero:
+Observamos que este fichero wsdl.xml define los mensajes intercambiados en la invocación de los métodos java del servicio, y también cabe destacar que establece cuales són los métodos java del servicio que se pueden ejecutar desde la página, y cuales son los `input` que inician cada uno de ellos. Por tanto, básicamente define que accioes activan las llamadas a cada uno de los métodos java del servicio web.
+
+Los tipos de dato intercambiados con el web service se encuentran definidos en el fichero:
 http://dao.visa.ssii2/ 
 Localizado en:
 http://10.1.2.1:8080/P1-ws-ws/VisaDAOWSService?xsd=1
@@ -133,6 +155,14 @@ string, boolean, double e int.
 Los tipos de dato que se definen son:
 compruebaTarjeta, compruebaTarjetaResponse,delPagos, delPagosResponse, errorLog, errorLogResponse, getPagos, getPagosResponse, isDebug, isDebugResponse, isDirectConnection, isDirectConnectionResponse, isPrepared, isPreparedResponse, realizaPago, realizaPagoResponse, setDebug, setDebugResponse, setDirectConnection, setDirectConnectionResponse, setPrepared, setPreparedResponse, tarjetaBean y pagoBean.
 
+Los tipos de dato (tanto los predefinidos como los que se predefinen) podemos observarlos el el fichero 
+
+http://10.1.2.1:8080/P1-ws-ws/VisaDAOWSService?xsd=1
+
+Al observar este fichero, los tipos predefinidos vienen precedidos de `xs:` mientras que los que se definen en el fichero vienen precedidos por `tns:` de este modo se consigue que los tipos de dato predefinidos sean fácilemnte diferenciables de los propios a simple vista en el archivo.
+
+El archivo xml también facilita la identificación de los distintos elementos con el uso de varias etiquetas facilmente diferenciables:
+
 La etiqueta asociada a los métodos invocados en el web service es `<operation>`.
 
 La etiqueta que describe los mensajes intercambiados en la invocación de los métodos del web service es `<mesage>`.
@@ -140,6 +170,8 @@ La etiqueta que describe los mensajes intercambiados en la invocación de los m�
 El protocolo de comunicación se especifica en la etiqueta `<soap:binding>`.
 
 La URL a la que se tiene que conectar un cliente para acceder al web service se especifica en la etiqueta `<soap:address>`.
+
+De nuevo estas etiquetas facilitan enormemente la diferenciación a simple vista de los distintos elementos y secciones del archivo xml.
 
 
 ### Ejercicio 8
