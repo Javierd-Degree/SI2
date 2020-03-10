@@ -152,3 +152,7 @@ Como se observa obtenemps el mensaje indicando que el pago se ha realizado de fo
 
 ### Ej7
 
+
+### Ej8
+La segunda imagen muestra que se ha actualizado el saldo.
+Ej8_3 muestra el error que sale cuando el id de transaccion y comercio están repetidos. Ej8_4 muestra que no se ha actualizado el saldo.

@@ -211,7 +211,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
         Connection con = null;
         Statement stmt = null;
         ResultSet rs = null;
-        PagoBean ret = null;
+        boolean ret = false;
         String codRespuesta = "999"; // En principio, denegado
 
         // TODO: Utilizar en funcion de isPrepared()
@@ -237,33 +237,30 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
             pstmt = con.prepareStatement(select);
             pstmt.setString(1, pago.getTarjeta().getNumero());
             rs = pstmt.executeQuery();
-            double saldo = rs.getDouble("saldo");
-
-
-            // Comprobar si es suficiente para el pago
-
-            if (saldo < pago.getImporte()) {
-                pago.setIdAutorizacion(null);
-                ret = null;
-            } else {
-                saldo -= pago.getImporte();
-                String update  = UPDATE_SALDO_QRY;
-                errorLog(update);
-                pstmt = con.prepareStatement(update);
-                pstmt.setDouble(1, saldo);
-                pstmt.setString(2, pago.getTarjeta().getNumero());
-                ret = null;
-                if (!pstmt.execute()
-                       && pstmt.getUpdateCount() == 1) {
-                    ret = pago;
-                }
-            }
-
-            if (ret == null) {
-                return null;
-            }  
+            if(rs.next()){
+              double saldo = rs.getDouble("saldo");
+              if (saldo < pago.getImporte()) {
+                  pago.setIdAutorizacion(null);
+                  ret = false;
+              } else {
+                  saldo -= pago.getImporte();
+                  String update  = UPDATE_SALDO_QRY;
+                  errorLog(update);
+                  pstmt = con.prepareStatement(update);
+                  pstmt.setDouble(1, saldo);
+                  pstmt.setString(2, pago.getTarjeta().getNumero());
+                  ret = false;
+                  if (!pstmt.execute()
+                         && pstmt.getUpdateCount() == 1) {
+                      ret = true;
+                  }
+               }
+             } else {
+               ret = false;
+             }
 
             // Insertar en la base de datos el pago
+            if (ret) {
 
             /* TODO Usar prepared statement si
                isPrepared() == true */
@@ -276,27 +273,26 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                pstmt.setDouble(2, pago.getImporte());
                pstmt.setString(3, pago.getIdComercio());
                pstmt.setString(4, pago.getTarjeta().getNumero());
-               ret = null;
+               ret = false;
                if (!pstmt.execute()
                        && pstmt.getUpdateCount() == 1) {
-                 ret = pago;
+                 ret = true;
                }
 
             } else {
-            /**************************************************/
-            stmt = con.createStatement();
-            String insert = getQryInsertPago(pago);
-            errorLog(insert);
-            ret = null;
-            if (!stmt.execute(insert)
-                    && stmt.getUpdateCount() == 1) {
-                ret = pago;
-			}
+              /**************************************************/
+              stmt = con.createStatement();
+              String insert = getQryInsertPago(pago);
+              errorLog(insert);
+              ret = false;
+              if (!stmt.execute(insert)
+                      && stmt.getUpdateCount() == 1) {
+                  ret = true;
+  			      }
             }/****************/
 
             // Obtener id.autorizacion
-            if (ret != null) {
-
+            if (ret) {
                 /* TODO Permitir usar prepared statement si
                  * isPrepared() = true */
                 /**************************************************/
@@ -319,16 +315,14 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                     pago.setIdAutorizacion(String.valueOf(rs.getInt("idAutorizacion")));
                     pago.setCodRespuesta(rs.getString("codRespuesta"));
                 } else {
-                    ret = null;
+                    ret = false;
                 }
-
-            } else {
-                throw new EJBException();
             }
+          }
 
         } catch (Exception e) {
             errorLog(e.toString());
-            ret = null;
+            ret = false;
         } finally {
             try {
                 if (rs != null) {
@@ -347,7 +341,10 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
             }
         }
 
-        return ret;
+        if (ret == false){
+          throw new EJBException("Pago incorrecto");
+        }
+        return pago;
     }
 
 
