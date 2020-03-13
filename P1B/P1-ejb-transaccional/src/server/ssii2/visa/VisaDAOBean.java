@@ -262,7 +262,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
             // Insertar en la base de datos el pago
             if (ret) {
 
-            /* TODO Usar prepared statement si
+            /* Usar prepared statement si
                isPrepared() == true */
             /**************************************************/
             if (isPrepared() == true) {
@@ -293,7 +293,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
 
             // Obtener id.autorizacion
             if (ret) {
-                /* TODO Permitir usar prepared statement si
+                /* Permitir usar prepared statement si
                  * isPrepared() = true */
                 /**************************************************/
                 if (isPrepared() == true) {

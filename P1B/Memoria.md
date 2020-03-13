@@ -1,8 +1,14 @@
+Javier Delgado del Cerro y Javier López Cano
+
 # Memoria P1B
 
 ### Cuestión 1
 
-### Ej1
+
+
+
+
+### Ejercicio 1
 
 En primer lugar añadimos el siguiente import en la parte superior del fichero VisaDAOBean.java junto con el resto de los imports:
 
@@ -39,7 +45,7 @@ public void setDirectConnection(boolean directConnection);
 
 
 
-### Ej2
+### Ejercicio 2
 
 Tras cambiar los imports que se nos piden, el inicio de `ProcesaPago.java` queda de la siguiente forma:
 
@@ -49,7 +55,7 @@ Tras esto añadimos el objeto proxy para acceder al EJB local con la anotación 
 
 ![](./Ej2_2.png)
 
-Por último eliminamos la declaración del webservice VisaDAOWS y el código para obtener el objeto remoto pues se usará el EJB local, además eliminamos también las referencias a BindingProvider. Por tanto el código quedará del siguiente modo:
+Por último eliminamos la declaración del webservice *VisaDAOWS* y el código para obtener el objeto remoto pues se usará el EJB local, además eliminamos también las referencias a BindingProvider. Por tanto el código quedará del siguiente modo:
 
 ![](./Ej2_3.png)
 
@@ -59,7 +65,7 @@ Por último eliminamos la declaración del webservice VisaDAOWS y el código par
 
 
 
-### Ej3
+### Ejercicio 3
 
 Editamos el fichero `build.properties` colocando en `as.host.client` y `as.host.server` la dirección IP `10.1.2.2`, es decir, la IP del servidor de aplicaciones, esto se debe a que tanto el cliente como el servidor van a desplegarse en la misma máquina virtual.
 
@@ -82,19 +88,19 @@ Y al abrir la pestaña de administración de Glassfish y vemos que se ha despleg
 
 
 
-### Ej4
+### Ejercicio 4
 
-Accedemos a la aplicación para comprobar ssu correcto funcionamiento.
+Accedemos a la aplicación para comprobar su correcto funcionamiento.
 
 Realizamos un pago mediante `pago.html` y vemos que se realiza correctamente.
 
 ![](./Ej4_1.png)
 
-Realizamos ahora uno a través de `testbd.jsp` y vemos de nuevo que funciona correctamente.
+Realizamos ahora uno a través de `testbd.jsp`, sin *directconnection* y vemos de nuevo que funciona correctamente.
 
 ![](./Ej4_2.png)
 
-Listamos ahora los pagos del comercio 2 para ver que se han guardado en la base de datos correctamente:
+Listamos ahora los pagos del comercio 1 para ver que se han guardado en la base de datos correctamente:
 
 ![](./Ej4_3.png)
 
@@ -102,39 +108,39 @@ Por último eliminamos los pagos y vemos que la acción se ejecuta sin problemas
 
 ![](./Ej4_4.png)
 
-Como todas estas aciones han funcionado como se esperaba, deducimos que la aplicación se ha desplegado de forma correcta.
+Como todas estas acciones han funcionado como se esperaba, deducimos que la aplicación se ha desplegado de forma correcta.
 
 
 
-### Ej5
+### Ejercicio 5
 
 Realizamos los cambios necesarios en el código para implementar la invocación remota de los métodos de los EJB.
 
-Primero creamos la VisaDAORemote copiando VisaDAOLocal y cambiando el nombre de la interfaz a VisaDAORemote y cambiando la anotación `@Local` a `@Remote` para que implemente la invocación remota. Para esto es también necesario realizar el import de `Remote` de `java.ejb`. El código por tanto quedará:
+Primero creamos la clase *VisaDAORemote* copiando *VisaDAOLocal* y cambiando el nombre de la interfaz a *VisaDAORemote* y la anotación `@Local` a `@Remote` para que implemente la invocación remota. Para esto es también necesario realizar el import de `Remote` de `java.ejb`. El código por tanto quedará:
 
 ![](./Ej5_VisaDAORemote.png)
 
-Tras esto modificamos VisaDAOBean para que implemente también la interfaz VisaDAORemote:
+Tras esto modificamos *VisaDAOBean* para que implemente también la interfaz *VisaDAORemote*:
 
 ![](./Ej5_VisaDAOBean.png)
 
-Por último modificamos TarjetaBean y PagoBean para que implementen la interfaz `Serializable` realizando el import correspondiente.
+Por último modificamos *TarjetaBean* y *PagoBean* para que implementen la interfaz `Serializable` realizando el import correspondiente.
 
-De este modo PagoBean quedaría:
+De este modo *PagoBean* quedaría:
 
 ![](./Ej5_PagoBean.png)
 
-Y TarjetaBean:
+Y *TarjetaBean*:
 
 ![](./Ej5_TarjetaBean.png)
 
 
 
-### Ej6
+### Ejercicio 6
 
 Para implementar el cliente remoto, partimos de `P1-base` y eliminamos el directorio `ssii2/visa/dao` como se nos indica.
 
-Modificamos PagoBean y TarjetaBean para que implementen la interfaz `Serializable` del mismo modo que en el ejercicio 5.
+Modificamos *PagoBean* y *TarjetaBean* para que implementen la interfaz `Serializable` del mismo modo que en el ejercicio 5.
 
 Copiamos la interfaz `VisaDAORemote` implementada en el servidor remoto en el ejercicio 5, y la pegamos en el cliente remoto en el directorio `P1-ejb-cliente-remoto/src/ssii2/visa` como se nos indica en el enunciado.
 
@@ -146,13 +152,116 @@ Desplegamos el cliente en la máquina virtual con IP `10.1.2.1` y realizamos un 
 
 ![](./Ej6.png)
 
-Como se observa obtenemps el mensaje indicando que el pago se ha realizado de forma correcta y, por tanto, deducimos que el cliente está correctamente implementado y desplegado.
+Como se observa obtenemos el mensaje indicando que el pago se ha realizado de forma correcta y, por tanto, deducimos que el cliente está correctamente implementado y desplegado.
+
+### Ejercicio 7
+
+En primer lugar, añadimos el atributo *saldo* y sus métodos de acceso a *TarjetaBean.java*:
+
+![](./Ej7_TarjetaBean.png)
+
+Tras esto, modificamos el archivo *VisaDAOBean.java* para importar *EJBException*, y declaramos los dos *prepared statements* pedidos:
+
+![](./Ej7_1.png)
+
+![](./Ej7_Prep_Statements.png)
+
+Modificamos entonces el método *realizaPago*, que queda de la siguiente manera:
+
+![](Ej7_RealizaPago1.png)
+
+![](Ej7_RealizaPago2.png)
+
+![](Ej7_RealizaPago3.png)
+
+Tras esto, modificamos el servlet *ProcesaPago* para que capte la nueva posible interrupción *EJBException*:
+
+![](./Ej7_ProcesaPago.png)
 
 
 
-### Ej7
+### Ejercicio 8
+
+En primer lugar, probamos a hacer un pago correcto y apreciamos en Tora como se ha actualizado el saldo:
+
+![](Ej8_1.png)![](Ej8_2.png)
+
+Tras esto, probamos a hacer una operación con id de transacción y comercio duplicados y vemos que el saldo no varía, como era de esperar:
+
+![](Ej8_3.png)
+
+![](Ej8_4.png)
 
 
-### Ej8
-La segunda imagen muestra que se ha actualizado el saldo.
-Ej8_3 muestra el error que sale cuando el id de transaccion y comercio están repetidos. Ej8_4 muestra que no se ha actualizado el saldo.
+
+### Ejercicio 9
+
+Declaramos en la máquina *10.1.2.2* la factoría de conexiones como se indica:
+
+![](Ej9.png)
+
+
+
+### Ejercicio 10
+
+De nuevo, declaramos la cola de mensajes en la máquina *10.1.2.2* como se indica en el enunciado:
+
+![](Ej10.png)
+
+
+
+### Ejercicio 11
+
+
+
+### Ejercicio 12
+
+La ventaja de usar el método basado en recursos JMS dinámicos en vez de en estáticos es principalmente que al poder establecer los nombres de la connection factory y de la cola en tiempo de ejecución, puedes usar un servidor externo para obtener dichos nombres, de forma que te permite por ejemplo añadir más colas sin modificar la aplicación, redistribuyendo los clientes.
+
+Las modificaciones hechas en el archivo son las siguientes:
+
+![](./Ej12_1.png)
+
+![](./Ej12_2.png)
+
+### Ejercicio 13
+
+Añadimos a los campos *as.host.mdb* y *as.host.server* la IPs *10.1.2.2* porque es la máquina en la que se encuentra servidor y las colas de mensajes.
+
+Revisando el fichero *jms.xml* podemos ver que para crear la cola JMS se utiliza:
+```xml
+<antcall target="create-jms-resource">
+   <param name="jms.restype" value="javax.jms.Queue" />
+   <param name="jms.resource.property" value="Name=${jms.physname}" />
+   <param name="jms.resource.name" value="${jms.name}" />
+</antcall>
+
+
+ <target name="create-jms-resource"
+     description="creates jms destination resource">
+     <exec executable="${asadmin}">
+        <arg line=" --user ${as.user}" />
+        <arg line=" --passwordfile ${as.passwordfile}" />
+        <arg line=" --host ${as.host.server}" />
+        <arg line=" --port ${as.port}" />
+        <arg line="create-jms-resource"/>
+        <arg line=" --restype ${jms.restype}" />
+        <arg line=" --enabled=true" />
+        <arg line=" --property ${jms.resource.property}" />
+        <arg line=" ${jms.resource.name}" />
+     </exec>
+ </target>
+
+```
+
+Por tanto, el comando para crear la cola sería
+```bash
+asadmin --user admin --paswordfile ./passwordfile --host 10.1.2.2 --port 4848 create-jms-resource --restype javax.jms.Queue --enabled=true --property Name=VisaPagosQueue jms/VisaPagosQueue
+```
+
+### Ej14
+
+
+Una vez ejecutamos `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar 0` para enviar a la cola el id de transacción cero, la salida con `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar -browse` es la siguiente:
+
+Esto demuestra que el mensaje se ha enviado correctamente.

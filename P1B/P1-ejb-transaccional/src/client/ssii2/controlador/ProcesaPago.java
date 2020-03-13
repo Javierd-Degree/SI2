@@ -187,10 +187,10 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-            request.setAttribute(ComienzaPago.ATTR_PAGO, pago);
-            if (sesion != null) sesion.invalidate();
-            reenvia("/pagoexito.jsp", request, response);
-            return;
+        request.setAttribute(ComienzaPago.ATTR_PAGO, pago);
+        if (sesion != null) sesion.invalidate();
+        reenvia("/pagoexito.jsp", request, response);
+        return;
 
 
     }
