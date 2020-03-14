@@ -4,9 +4,9 @@ Javier Delgado del Cerro y Javier López Cano
 
 ### Cuestión 1
 
+Además de varios imports del paquete `java.sql` y el import de `java.utils.ArrayList`, destaca el `import javax.ejb.local;` junto con la anotación `@Local`. 
 
-
-
+Esta anotación especifica que para cualquier clase que implemente esta interfaz, sus métodos EJB que provengan de la interfaz *VisaDAOLocal* solo podrán ser llamados desde un cliente local.
 
 ### Ejercicio 1
 
@@ -63,7 +63,88 @@ Por último eliminamos la declaración del webservice *VisaDAOWS* y el código p
 
 ### Cuestión 2
 
+El archivo *application.xml* contiene la siguiente información:
 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<application version="5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
+  <display-name>P1-ejb</display-name>
+  <module>
+    <ejb>P1-ejb.jar</ejb>
+  </module>
+  <module>
+    <web>
+    	<web-uri>P1-ejb-cliente.war</web-uri>
+    	<context-root>/P1-ejb-cliente</context-root>
+    </web>	
+  </module>
+</application>
+```
+
+Este archivo especifica el nombre de la aplicación que se mostrará en la consola de administración de Glassfish y describe cada uno de sus módulos. 
+
+Especifica entonces que hay dos módulos: 
+
+- El primero contiene un *ejb*, y se indica su nombre.
+- El segundo módulo es un elemento web, y se especifica su URI relativa al nivel del package de la aplicación y la ruta sobre la que se despliega este módulo de la aplicación.
+
+Hasta ahora se han generado entonces los ficheros `/dist/server/P1-ejb.jar` y `/dist/client/P1-ejb-cliente.war`. Tras ejecutar el comando `jar -tvf` con ambos, el primero devuelve la siguiente salida:
+
+```
+     0 Sat Mar 14 18:56:50 CET 2020 META-INF/
+   125 Sat Mar 14 18:56:48 CET 2020 META-INF/MANIFEST.MF
+     0 Tue Mar 03 17:55:08 CET 2020 ssii2/
+     0 Tue Mar 03 17:55:08 CET 2020 ssii2/visa/
+     0 Tue Mar 03 17:55:08 CET 2020 ssii2/visa/dao/
+   255 Tue Feb 25 17:13:56 CET 2020 META-INF/sun-ejb-jar.xml
+  1464 Tue Feb 25 17:02:36 CET 2020 ssii2/visa/PagoBean.class
+   856 Tue Feb 25 17:02:36 CET 2020 ssii2/visa/TarjetaBean.class
+   593 Tue Feb 25 17:02:36 CET 2020 ssii2/visa/VisaDAOLocal.class
+  1723 Sat Mar 14 18:56:36 CET 2020 ssii2/visa/dao/DBTester.class
+  7037 Sat Mar 14 18:56:36 CET 2020 ssii2/visa/dao/VisaDAOBean.class
+```
+
+El segundo devuelve:
+
+```
+     0 Sat Mar 14 18:57:08 CET 2020 META-INF/
+   125 Sat Mar 14 18:57:06 CET 2020 META-INF/MANIFEST.MF
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/ssii2/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/ssii2/controlador/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/ssii2/filtros/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/ssii2/visa/
+     0 Tue Mar 03 17:55:06 CET 2020 WEB-INF/classes/ssii2/visa/error/
+     0 Tue Feb 25 17:01:28 CET 2020 WEB-INF/lib/
+     0 Tue Mar 03 17:55:08 CET 2020 error/
+  2844 Tue Feb 25 17:20:08 CET 2020 WEB-INF/classes/ssii2/controlador/ComienzaPago.class
+  1513 Tue Feb 25 17:20:08 CET 2020 WEB-INF/classes/ssii2/controlador/DelPagos.class
+  1365 Tue Feb 25 17:20:08 CET 2020 WEB-INF/classes/ssii2/controlador/GetPagos.class
+  4915 Tue Feb 25 17:20:42 CET 2020 WEB-INF/classes/ssii2/controlador/ProcesaPago.class
+  1894 Tue Feb 25 17:20:08 CET 2020 WEB-INF/classes/ssii2/controlador/ServletRaiz.class
+  2608 Tue Feb 25 17:20:42 CET 2020 WEB-INF/classes/ssii2/filtros/CompruebaSesion.class
+  3170 Tue Feb 25 17:20:42 CET 2020 WEB-INF/classes/ssii2/visa/ValidadorTarjeta.class
+   616 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisa.class
+   198 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisaCVV.class
+   209 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisaFechaCaducidad.class
+   207 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisaFechaEmision.class
+   201 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisaNumero.class
+   202 Sat Mar 14 18:56:54 CET 2020 WEB-INF/classes/ssii2/visa/error/ErrorVisaTitular.class
+  6044 Tue Feb 25 17:20:50 CET 2020 WEB-INF/web.xml
+   455 Tue Feb 25 17:20:50 CET 2020 borradoerror.jsp
+   501 Tue Feb 25 17:20:50 CET 2020 borradook.jsp
+   509 Tue Feb 25 17:20:50 CET 2020 cabecera.jsp
+   283 Tue Feb 25 17:20:50 CET 2020 error/muestraerror.jsp
+  2729 Tue Feb 25 17:20:50 CET 2020 formdatosvisa.jsp
+  1257 Tue Feb 25 17:20:50 CET 2020 listapagos.jsp
+  1178 Tue Feb 25 17:20:50 CET 2020 pago.html
+  1142 Tue Feb 25 17:20:50 CET 2020 pagoexito.jsp
+   104 Tue Feb 25 17:20:50 CET 2020 pie.html
+  5011 Tue Feb 25 17:20:50 CET 2020 testbd.jsp
+```
+
+En ambos casos la salida es la esperada: los archivos y clases necesarios para el servidor y el cliente respectivamente.
 
 ### Ejercicio 3
 
@@ -210,7 +291,7 @@ De nuevo, declaramos la cola de mensajes en la máquina *10.1.2.2* como se indic
 
 
 
-### Ejercicio 11
+### Ejercicio 11 ACABAR
 
 
 
@@ -224,7 +305,7 @@ Las modificaciones hechas en el archivo son las siguientes:
 
 ![](./Ej12_2.png)
 
-### Ejercicio 13
+### Ejercicio 13 ACABAR
 
 Añadimos a los campos *as.host.mdb* y *as.host.server* la IPs *10.1.2.2* porque es la máquina en la que se encuentra servidor y las colas de mensajes.
 
@@ -265,3 +346,4 @@ asadmin --user admin --paswordfile ./passwordfile --host 10.1.2.2 --port 4848 cr
 Una vez ejecutamos `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar 0` para enviar a la cola el id de transacción cero, la salida con `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar -browse` es la siguiente:
 
 Esto demuestra que el mensaje se ha enviado correctamente.
+
