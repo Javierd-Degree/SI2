@@ -38,14 +38,15 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   }
 
   private static final String UPDATE_RESPUESTA_CODE =
-                "update pagos" +
+                "update pago" +
                 " set codRespuesta = 999" +
                 " where idAutorizacion = ?" ;
 
   private static final String UPDATE_SALDO_QRY =
-                  "update tarjeta inner join pagos on tarjeta.numeroTarjeta=pagos.numeroTarjeta" +
-                  " set tarjeta.saldo = tarjeta.saldo + pagos.importe" +
-                  " where pagos.idAutorizacion = ?" ;
+                  "update tarjeta" +
+                  " set saldo = saldo + pago.importe" +
+                  " from pago" +
+                  " where tarjeta.numeroTarjeta=pago.numeroTarjeta and pago.idAutorizacion = ?" ;
 
   // TODO : Método onMessage de ejemplo
   // Modificarlo para ejecutar el UPDATE definido más arriba,
@@ -69,13 +70,13 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
               String update = UPDATE_RESPUESTA_CODE;
 
               pstmt = con.prepareStatement(update);
-              pstmt.setString(1, msg.getText());
+              pstmt.setInt(1, Integer.parseInt(msg.getText()));
               rs = pstmt.executeQuery();
 
               update = UPDATE_SALDO_QRY;
 
               pstmt = con.prepareStatement(update);
-              pstmt.setString(1, msg.getText());
+              pstmt.setInt(1, Integer.parseInt(msg.getText()));
               rs = pstmt.executeQuery();
 
           } else {
@@ -86,8 +87,11 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
       } catch (JMSException e) {
           e.printStackTrace();
           mdc.setRollbackOnly();
+          System.err.println(e.toString());
       } catch (Throwable te) {
           te.printStackTrace();
+          mdc.setRollbackOnly();
+          System.err.println(te.toString());
       } finally {
             try {
                 if (rs != null) {
