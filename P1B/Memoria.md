@@ -340,10 +340,31 @@ Por tanto, el comando para crear la cola sería
 asadmin --user admin --paswordfile ./passwordfile --host 10.1.2.2 --port 4848 create-jms-resource --restype javax.jms.Queue --enabled=true --property Name=VisaPagosQueue jms/VisaPagosQueue
 ```
 
-### Ej14
+### Ejercicio 14
 
+En primer lugar modificamos *VisaQueueMessageProducer.java* para enviar *args[0]* como mensaje de texto, de forma que el código queda:
 
-Una vez ejecutamos `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar 0` para enviar a la cola el id de transacción cero, la salida con `/opt/glassfish-4.1.2/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar -browse` es la siguiente:
+![](./Ej14_code.png)
+
+Tras esto, detenemos la ejecución de la aplicación *P1-jms-mdb* y una vez ejecutamos `/opt/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar 1` para enviar a la cola el id de transacción uno, la salida con `/opt/glassfish4/glassfish/bin/appclient -targetserver 10.1.2.2 -client dist/clientjms/P1-jms-clientjms.jar -browse` es la siguiente:
+
+![](Ej14.png)
 
 Esto demuestra que el mensaje se ha enviado correctamente.
+
+Modificamos entonces la variable *default_JMS_host* estbleciendo como dirección IP del host la *10.1.2.2*, donde está desplegada la cola de mensajes. Activamos la aplicación *P1-jms-mdb*, reiniciamos el servidor y verificamos que la cola está vacía con el último comando expuesto:
+
+![](Ej14_Vacio.png)
+
+Tras esto, realizamos un pago con la web y vemos que se ha hecho correctamente:
+
+![](Ej14_Pago.png)
+
+Usamos el cliente para cancelarlo y posteriormente comprobamos que se ha cancelado correctamente, pues la cola está vacía y la información de la base de datos está actualizada (el saldo y el estado del pago con id 2):
+
+![](Ej14_Cancelar.png)
+
+![](Ej14_Resultado.png)
+
+![](./Ej14_ResPago.png)
 

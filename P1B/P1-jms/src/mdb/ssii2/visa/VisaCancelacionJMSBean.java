@@ -56,28 +56,31 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   public void onMessage(Message inMessage) {
       TextMessage msg = null;
       PreparedStatement pstmt = null;
-      ResultSet rs = null;
       Connection con = null;
 
       try {
           if (inMessage instanceof TextMessage) {
               msg = (TextMessage) inMessage;
               logger.info("MESSAGE BEAN: Message received: " + msg.getText());
+              int idAutorizacion = Integer.parseInt(msg.getText());
 
               con = getConnection();
 
-              pstmt = null;
               String update = UPDATE_RESPUESTA_CODE;
 
               pstmt = con.prepareStatement(update);
-              pstmt.setInt(1, Integer.parseInt(msg.getText()));
-              rs = pstmt.executeQuery();
+              pstmt.setInt(1, idAutorizacion);
+              if (!(!pstmt.execute() && pstmt.getUpdateCount() == 1)){
+              	logger.warning("Error while update response code");
+              }
 
               update = UPDATE_SALDO_QRY;
 
               pstmt = con.prepareStatement(update);
-              pstmt.setInt(1, Integer.parseInt(msg.getText()));
-              rs = pstmt.executeQuery();
+              pstmt.setInt(1, idAutorizacion);
+              if (!(!pstmt.execute() && pstmt.getUpdateCount() == 1)){
+              	logger.warning("Error while update cash");
+              }
 
           } else {
               logger.warning(
@@ -87,16 +90,12 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
       } catch (JMSException e) {
           e.printStackTrace();
           mdc.setRollbackOnly();
-          System.err.println(e.toString());
       } catch (Throwable te) {
           te.printStackTrace();
           mdc.setRollbackOnly();
-          System.err.println(te.toString());
+          logger.warning(te.getMessage());
       } finally {
             try {
-                if (rs != null) {
-                    rs.close(); rs = null;
-                }
                 if (pstmt != null) {
                     pstmt.close(); pstmt = null;
                 }
@@ -104,6 +103,7 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
                     closeConnection(con); con = null;
                 }
             } catch (SQLException e) {
+            	logger.warning(e.getMessage());
             }
         }
   }
