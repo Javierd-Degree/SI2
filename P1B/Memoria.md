@@ -4,7 +4,7 @@ Javier Delgado del Cerro y Javier López Cano
 
 ### Cuestión 1
 
-Además de varios imports del paquete `java.sql` y el import de `java.utils.ArrayList`, destaca el `import javax.ejb.local;` junto con la anotación `@Local`. 
+Además de varios imports del paquete `java.sql` y el import de `java.utils.ArrayList`, destaca el `import javax.ejb.local;` junto con la anotación `@Local`.
 
 Esta anotación especifica que para cualquier clase que implemente esta interfaz, sus métodos EJB que provengan de la interfaz *VisaDAOLocal* solo podrán ser llamados desde un cliente local.
 
@@ -76,7 +76,7 @@ El archivo *application.xml* contiene la siguiente información, necesaria para 
     <web>
     	<web-uri>P1-ejb-cliente.war</web-uri>
     	<context-root>/P1-ejb-cliente</context-root>
-    </web>	
+    </web>
   </module>
 </application>
 ```
@@ -303,8 +303,18 @@ De nuevo, declaramos la cola de mensajes en la máquina *10.1.2.2* como se indic
 
 
 
-### Ejercicio 11 ACABAR
+### Ejercicio 11
 
+En primer lugar modificamos el fichero sun-ejb-jar.xml como se nos indica en el enunciado, estableciendo que el nombre de la connection factory sea "jms/VisaConnectionFactory".
+![](Ej11_sun_ejb.png)
+
+Tras esto modificamos el fichero `VisaCancelacionJMSBean.java`. En este, implementamos las consultas SQL tanto para cambiar el código de respuesta de una transacción a 999, como para actualizar el saldo de la tarjeta tras modificar el pago. Establecemos ambas como "prepared statements" que serán invocados posteriormente en el método `onMessage()`.
+![](Ej11_sqlStatements.png)
+
+Por último modificamos el método `onMessage()` haciendo que implemente ambas consultas SQL como prepared statements, fijándonos en el código realizado para implementar prepared statements del archivo `VisaDAOBean.java` de `P1-ejb-transaccional` de ejercicios anteriores.
+![](Ej11_onMessage.png)
+
+Como se observa en la imagen, en este método llevamos tambien a cabo el control de errores mediante varios `catch` que controlan las distintas excepciones que pueden ser lanzadas, y mediante varios `if` que comprueban que las sentencias sql se han ejecutado correctamente en la base de datos.
 
 
 ### Ejercicio 12
@@ -317,9 +327,22 @@ Las modificaciones hechas en el archivo son las siguientes:
 
 ![](./Ej12_2.png)
 
-### Ejercicio 13 ACABAR
+### Ejercicio 13
 
-Añadimos a los campos *as.host.mdb* y *as.host.server* la IPs *10.1.2.2* porque es la máquina en la que se encuentra servidor y las colas de mensajes.
+Añadimos a los campos *as.host.mdb* y *as.host.server* la IPs *10.1.2.2* porque es la máquina en la que se encuentra tanto el servidor como las colas de mensajes.
+
+Tras esto entramos en la consola de administración de Glassfish y borramos manualmente la "connectionFactory".
+Ejecutamos los comandos:
+```bash
+$ cd P1-jms
+$ ant todo
+```
+Como se nos indica en el enunciado, para que la "connection factory" y la cola se generen de forma automática, tras lo cual entramos en la consola de administración de Glassfish para comprobar que la acción se ha realizado correctamente.
+![](./Ej13_1.png)
+![](./Ej13_1.png)
+
+Como se observa en las imágenes, ambos recurssos se han generado de forma correcta.
+
 
 Revisando el fichero *jms.xml* podemos ver que para crear la cola JMS se utiliza:
 ```xml
@@ -379,4 +402,3 @@ Usamos el cliente para cancelarlo y posteriormente comprobamos que se ha cancela
 ![](Ej14_Resultado.png)
 
 ![](./Ej14_ResPago.png)
-
