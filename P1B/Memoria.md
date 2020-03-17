@@ -63,7 +63,7 @@ Por último eliminamos la declaración del webservice *VisaDAOWS* y el código p
 
 ### Cuestión 2
 
-El archivo *application.xml* contiene la siguiente información:
+El archivo *application.xml* contiene la siguiente información, necesaria para describir una aplicación Glassfish:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -81,14 +81,12 @@ El archivo *application.xml* contiene la siguiente información:
 </application>
 ```
 
-Este archivo especifica el nombre de la aplicación que se mostrará en la consola de administración de Glassfish y describe cada uno de sus módulos. 
+Este archivo especifica el nombre de la aplicación que se mostrará en la consola de administración de Glassfish mediante el elemento xml *display-name*, y describe cada uno de sus dos módulos:
 
-Especifica entonces que hay dos módulos: 
+- El primero contiene un *ejb*, y se indica su nombre (*P1-ejb.jar*).
+- El segundo módulo es un elemento web, y se especifica su URI relativa al nivel del package de la aplicación (*P1-ejb-cliente.war*) y la ruta sobre la que se despliega este módulo de la aplicación (*/P1-ejb-cliente*).
 
-- El primero contiene un *ejb*, y se indica su nombre.
-- El segundo módulo es un elemento web, y se especifica su URI relativa al nivel del package de la aplicación y la ruta sobre la que se despliega este módulo de la aplicación.
-
-Hasta ahora se han generado entonces los ficheros `/dist/server/P1-ejb.jar` y `/dist/client/P1-ejb-cliente.war`. Tras ejecutar el comando `jar -tvf` con ambos, el primero devuelve la siguiente salida:
+Hasta ahora se han generado entonces los ficheros `/dist/server/P1-ejb.jar` , `/dist/client/P1-ejb-cliente.war` y `/dist/P1-ejb.ear`. Tras ejecutar el comando `jar -tvf` con los tres, el primero devuelve la siguiente salida:
 
 ```
      0 Sat Mar 14 18:56:50 CET 2020 META-INF/
@@ -104,7 +102,9 @@ Hasta ahora se han generado entonces los ficheros `/dist/server/P1-ejb.jar` y `/
   7037 Sat Mar 14 18:56:36 CET 2020 ssii2/visa/dao/VisaDAOBean.class
 ```
 
-El segundo devuelve:
+Podemos apreciar así que se incluyen todas las clases necesarias para que el servidor funcione correctamente, junto con el fichero *sun-ejb-jar.xml* que especifica la configuración del *entreprise bean*.
+
+El segundo archivo devuelve:
 
 ```
      0 Sat Mar 14 18:57:08 CET 2020 META-INF/
@@ -144,7 +144,19 @@ El segundo devuelve:
   5011 Tue Feb 25 17:20:50 CET 2020 testbd.jsp
 ```
 
-En ambos casos la salida es la esperada: los archivos y clases necesarios para el servidor y el cliente respectivamente.
+Y, de nuevo, permite ver todas las clases necesarias para que el cliente web se comunique con el servidor correctamente, las páginas *html* y *jsp* que tiene que permitir mostrar el cliente, y el archivo *web.xml* que almacena la descripción general de la aplicación web, con información sobre su nombre, mappeo entre servlets y urls, definición del tiempo de sesión por defecto y lista de archivos que el cliente envía por defecto, junto con la dirección del endpoint que usará el cliente.
+
+Por último, el tercer archivo devuelve la siguiente información:
+
+```
+     0 Tue Feb 25 17:21:00 CET 2020 META-INF/
+   105 Tue Feb 25 17:20:58 CET 2020 META-INF/MANIFEST.MF
+   508 Sat Feb 11 23:33:00 CET 2012 META-INF/application.xml
+ 20946 Tue Feb 25 17:20:52 CET 2020 P1-ejb-cliente.war
+  7001 Tue Feb 25 17:14:06 CET 2020 P1-ejb.jar
+```
+
+Como era de esperar, pues es el fichero encargado de empaquetar los distintos módulos cliente y servidor de la aplicación, junto con el fichero xml *application.xml* que describe dicha aplicación, como hemos explicado anteriormente. De esta forma, podemos desplegar la aplicación de manera correcta.
 
 ### Ejercicio 3
 
