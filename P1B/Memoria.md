@@ -305,7 +305,7 @@ De nuevo, declaramos la cola de mensajes en la máquina *10.1.2.2* como se indic
 
 ### Ejercicio 11
 
-En primer lugar modificamos el fichero sun-ejb-jar.xml como se nos indica en el enunciado, estableciendo que el nombre de la connection factory sea "jms/VisaConnectionFactory".
+En primer lugar modificamos el fichero sun-ejb-jar.xml como se nos indica en el enunciado, estableciendo que el nombre de la "connection factory" sea "jms/VisaConnectionFactory".
 ![](Ej11_sun_ejb.png)
 
 Tras esto modificamos el fichero `VisaCancelacionJMSBean.java`. En este, implementamos las consultas SQL tanto para cambiar el código de respuesta de una transacción a 999, como para actualizar el saldo de la tarjeta tras modificar el pago. Establecemos ambas como "prepared statements" que serán invocados posteriormente en el método `onMessage()`.
@@ -314,12 +314,12 @@ Tras esto modificamos el fichero `VisaCancelacionJMSBean.java`. En este, impleme
 Por último modificamos el método `onMessage()` haciendo que implemente ambas consultas SQL como prepared statements, fijándonos en el código realizado para implementar prepared statements del archivo `VisaDAOBean.java` de `P1-ejb-transaccional` de ejercicios anteriores.
 ![](Ej11_onMessage.png)
 
-Como se observa en la imagen, en este método llevamos tambien a cabo el control de errores mediante varios `catch` que controlan las distintas excepciones que pueden ser lanzadas, y mediante varios `if` que comprueban que las sentencias sql se han ejecutado correctamente en la base de datos.
+Como se observa en la imagen, en este método llevamos también a cabo el control de errores mediante varios `catch` que controlan las distintas excepciones que pueden ser lanzadas, y mediante varios `if` que comprueban que las sentencias SQL se han ejecutado correctamente en la base de datos.
 
 
 ### Ejercicio 12
 
-La ventaja de usar el método basado en recursos JMS dinámicos en vez de en estáticos es principalmente que al poder establecer los nombres de la connection factory y de la cola en tiempo de ejecución, puedes usar un servidor externo para obtener dichos nombres, de forma que te permite por ejemplo añadir más colas sin modificar la aplicación, redistribuyendo los clientes.
+La ventaja de usar el método basado en recursos JMS dinámicos en vez de en estáticos es principalmente que al poder establecer los nombres de la" connection factory" y de la cola en tiempo de ejecución, puedes usar un servidor externo para obtener dichos nombres, de forma que te permite por ejemplo añadir más colas sin modificar la aplicación, redistribuyendo los clientes.
 
 Las modificaciones hechas en el archivo son las siguientes:
 
@@ -331,7 +331,7 @@ Las modificaciones hechas en el archivo son las siguientes:
 
 Añadimos a los campos *as.host.mdb* y *as.host.server* la IPs *10.1.2.2* porque es la máquina en la que se encuentra tanto el servidor como las colas de mensajes.
 
-Tras esto entramos en la consola de administración de Glassfish y borramos manualmente la "connectionFactory".
+Tras esto entramos en la consola de administración de Glassfish y borramos manualmente la "connection factory".
 Ejecutamos los comandos:
 ```bash
 $ cd P1-jms
@@ -341,7 +341,7 @@ Como se nos indica en el enunciado, para que la "connection factory" y la cola s
 ![](./Ej13_1.png)
 ![](./Ej13_1.png)
 
-Como se observa en las imágenes, ambos recurssos se han generado de forma correcta.
+Como se observa en las imágenes, ambos recursos se han generado de forma correcta.
 
 
 Revisando el fichero *jms.xml* podemos ver que para crear la cola JMS se utiliza:
