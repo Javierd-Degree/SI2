@@ -7,7 +7,7 @@
 
 # Parametros a monitorizar
 MONITORS="server.resources.VisaPool.numconnused-current
-          server.network.http-listener-1.thread-pool.currentthreadsbusy-count 
+          server.network.http-listener-1.thread-pool.currentthreadsbusy-count
           server.network.http-listener-1.connection-queue.countqueued-count"
 
 GFUSER=admin
@@ -27,7 +27,7 @@ function Salida() {
      accJDBCCount += $2+0;
      accHTTPCount += $3+0;
      accHTTPQ     += $4+0;
-    } 
+    }
     END {
      printf "%12s %12s:\n","TOT.MUESTRAS","MEDIA";
      printf "%12s %12s %12s %12s\n", NR,accJDBCCount/NR,accHTTPCount/NR, accHTTPQ/NR;
@@ -62,7 +62,7 @@ while true ; do
      }
   }'
 done |
-asadmin --host $HOST --user $GFUSER --passwordfile $GFPASSFILE |
+/opt/glassfish-4.1.2/glassfish4/glassfish/bin/asadmin --host $HOST --user $GFUSER --passwordfile $GFPASSFILE |
 mawk -W interactive -vLOGFILE=$LOGFILE '
     BEGIN {
       numJDBCCount = numHTTPCount = numHTTPQ = -1;
