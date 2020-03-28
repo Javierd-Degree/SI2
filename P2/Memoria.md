@@ -54,3 +54,16 @@ Si deshabilitamos los tests de *P1-ws* y *P1-base* y modificamos el de *P1-ejb* 
 
 Como era de esperar, hay una reducción considerable en todos los tiempos respecto a los tests anteriores de *P1-ejb*. Esto se debe a que en este caso, el cliente estaba en la misma máquina virtual que el servidor, ahorrándose así la comunicación por la red, entre otras muchas cosas, y optimizando el proceso a costa de ser un sistema menos distribuido. **TODO COMPLETAR**
 
+### Ejercicio 4
+
+**TODO REDACTAR BIEN**
+
+El comando que se debe ejecutar para averiguar el `max queue size` es:
+```bash
+asadmin get --user admin --monitor server.network.http-listener-1.connection-queue.countqueued-count
+```
+
+El comando que se debe ejecutar para averiguar el `max pool size` es:
+```bash
+asadmin get --user admin --monitor server.resources.VisaPool.numconnused-current
+```
