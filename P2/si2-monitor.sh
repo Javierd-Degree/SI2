@@ -62,7 +62,7 @@ while true ; do
      }
   }'
 done |
-/opt/glassfish-4.1.2/glassfish4/glassfish/bin/asadmin --host $HOST --user $GFUSER --passwordfile $GFPASSFILE |
+asadmin --host $HOST --user $GFUSER --passwordfile $GFPASSFILE |
 mawk -W interactive -vLOGFILE=$LOGFILE '
     BEGIN {
       numJDBCCount = numHTTPCount = numHTTPQ = -1;

@@ -67,3 +67,25 @@ El comando que se debe ejecutar para averiguar el `max pool size` es:
 ```bash
 asadmin get --user admin --monitor server.resources.VisaPool.numconnused-current
 ```
+
+TODO: MANDATO PARA MONITORIZAR EL NUMERO DE ERRORES EN LAS PETICIONES AL SERVIDOR WEB
+
+
+
+### Ejercicio 6
+
+He incluido los archivos en una carpeta. Es normal que la cola no esté vacía etc porque hay un único usuario, pues JMeter usa un unico hilo. Por esto mismo, no son condiciones realistas.
+
+### Ejercicio 8
+
+Comentario para Javi - Hay que completar la columna de cpu del excel, para eso, se miran los datos en los .nmon de la maquina virtual (aquellos nombrados como `cNUM` con NUM el numero de hilos)
+
+
+
+A partir de 1750 hilos se puede ver como aumenta la latencia, con lo que a pesar de que la productividad sigue aumentando, las peticiones se resuelven cada vez más despacio.
+
+Desde 2000 a 2500 el rendimiento crece cada vez más lento. El cambio posterior es muy brusco, pero se han tomado varias pruebas y los resultados han sido en todos los casos muy similares.
+
+A partir de 2500 hilos se puede apreciar una bajada de rendimiento. Esto se debe probablemente a dos causas: por un lado, el servidor ha pasado ya la zona lineal de funcionamiento, y posiblemente la de transición, con lo que el rendimiento crece mucho más lento, y por otro lado, al tener que hacer la práctica en un único ordenador, que está usano dos máquinas virtuales y 2500 hilos, este se está saturando (para ver esto hay que mirar el nmon del ordenador en estas carpetas, observando como funciona la cpu en las de alrededor, y poniendo capturas que lo expliquen todo bien.)
+
+Con 3250 aparecen los primeros errores de sockets en JMeter, lo que significa que el servidor está saturado.
