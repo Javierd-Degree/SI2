@@ -30,7 +30,7 @@ Entonces, hacemos lo propio con el comando *nmon*, pulsando la tecla *m* para ob
 
 ![](./imagenes/nmonMV2.png)
 
-**TODO: COMENTAR ESTAS CAPTURAS**
+A la vista de estos resultados vemos que durante la ejecución del proceso el consumo de espacio de RAM es mucho mayor en el ordenador físico que en ambas máquinas virtuales, esto es lógico ya que el ordenador físico está ejecutando ambas máquinas además de otros procesos abiertos en este para realizar la práctica (editor de texto, nmon...). A pesar de esto observamos que en ambas máquinas, el procedimiento tiene un alto consumo de ram llegando incluso a ocupar un 70% de la capacidad de esta en la máquina virtual 2 que contiene el servidor. Es lógico también que la máquina virtual 2 tenga un mayor consumo de ram que la 1, ya que la máquina 2 contiene todo el servidor de la aplicación, mientras que la máquina virtual 1 tan solo contiene la base de datos.
 
 Como menciona el enunciado, ejecutamos un pago con cada una de las aplicaciones recién desplegadas, y comprobamos que las tres funcionan correctamente.
 
@@ -60,9 +60,12 @@ Como era de esperar, hay una reducción considerable en todos los tiempos respec
 
 ### Ejercicio 4
 
-**TODO REDACTAR BIEN**
+Como nos indica el enunciado, adaptamos la configuración del servidor a los parámetros especificados, tras lo cual guardamos el archivo de configuración `domain.xml` incluido en el entregable de la práctica.
+
+Observamos el archivo `si-monitor.sh` y la documentación del comando asadmin en busca de los comandos que se emplean para las acciones que se nos piden y descubrimos que son los siguientes.
 
 El comando que se debe ejecutar para averiguar el `max queue size` es:
+
 ```bash
 asadmin get --user admin --monitor server.network.http-listener-1.connection-queue.countqueued-count
 ```
@@ -90,6 +93,18 @@ La situación simulada en este ejercico es muy poco realista debido a que durant
 
 ### Ejercicio 8
 
+Tras realizar todos los pasos indicados en el enunciado para realizar la ejecución de la prueba y realizar la curva de productividad, introducimos todos los datos obtenidos en la tabla de la hoja de cálculo proporcionada, obteniendo la siguiente tabla como resultado.
+
+![](./tabla_rendimiento.png)
+
+Observando los resultados de la taba así como las siguentes gráficas resultantes:
+
+![](./graf_rendimiento.png)
+
+![](./graf_latencia.png)
+
+Podemos extraer ciertas conclusiones acerca del proceso probado.
+
 A partir de 1750 hilos se puede ver como aumenta la latencia, con lo que a pesar de que la productividad sigue aumentando, las peticiones se resuelven cada vez más despacio.
 
 Desde 2000 a 2500 el rendimiento crece cada vez más lento. El cambio posterior es muy brusco, pero se han tomado varias pruebas y los resultados han sido en todos los casos muy similares.
@@ -98,7 +113,7 @@ A partir de 2500 hilos se puede apreciar una bajada de rendimiento. Esto se debe
 
 Con 3250 aparecen los primeros errores de sockets en JMeter, lo que significa que el servidor está saturado.
 
-TODO: REVISAR
+Por tanto la región de saturación del servidor aparece alrededor de los 3250 usuarios concurrentes, aunque es dificil visualizarlo claramente en las gráficas debido a la caida en el rendimiento producida por realizar la prueba enteramente en un solo ordenador.
 
 ### Ejercicio 9
 
