@@ -1,10 +1,10 @@
 ### Ejercicio 1
 
-Seguimos todos los pasos indicamos y generamos el archivo *P2.jmx* incluido en la práctica. En este archivo no aparece en *View Results Tree*, pues fue añadido y eliminado posteriormente.
+Seguimos todos los pasos indicamos y generamos el archivo *P2.jmx* incluido en la práctica. En este archivo no aparece en *View Results Tree*, pues fue añadido y eliminado posteriormente como indica el enunciado.
 
 ### Ejercicio 2
 
-Al estar en casa y tener un único PC con linux instalado, no hemos podido usar dos ordenadores físicos distintos para probar la práctica. El subdelegado de clase habló con el profesor de prácticas y parece que valía con ejecutar todo en un único PC. En este caso, la dirección IP asignada a dicho PC es *192.168.1.160*.
+Al estar en casa y tener un único PC con Linux instalado, no hemos podido usar dos ordenadores físicos distintos para probar la práctica. El subdelegado de clase habló con el profesor de prácticas y parece que valía con ejecutar todo en un único PC. En este caso, la dirección IP asignada a dicho PC es *192.168.1.160*.
 
 Seguimos entonces los pasos para preparar el entorno de ejecución de pruebas adaptado a un único PC:
 
@@ -50,13 +50,15 @@ Observando los resultados obtenidos vemos que el mejor resultado es el de `P1-ba
 
 Esto se debe a que en `P1-base` tanto el servidor como el cliente se despliegan en la misma máquina virtual, reduciendo mucho el tiempo que tardan en enviarse las peticiones del cliente al servidor pues no necesitan deplazarse por la red.
 
-Para escoger este resultado observaría especialmente la columna del throughoutput pues es la que indica más fielmente el rendimiento.
+Para escoger este resultado observaría especialmente la columna del throughoutput pues es la que indica más fielmente el rendimiento. Además, en un servicio como el que ofrece esta práctica, la latencia no es un factor importante como podría ser en un servicio de vídeo en tiempo real.
 
-Si deshabilitamos los tests de *P1-ws* y *P1-base* y modificamos el de *P1-ejb* para que ejecute las pruebas del EJB local incluido en *P1-ejb-servidor-remoto* obtenemos los siguientes resultados:
+Entre la *P1-ws* y *P1-ejb* elegiríamos la segudna, pues presenta una latencia considerablemente menor con un throughoutput mucho mayor.
+
+Finalmente, si deshabilitamos los tests de *P1-ws* y *P1-base* y modificamos el de *P1-ejb* para que ejecute las pruebas del EJB local incluido en *P1-ejb-servidor-remoto* obtenemos los siguientes resultados:
 
 ![](./imagenes/Ej3_JMeter_EJB.png)
 
-Como era de esperar, hay una reducción considerable en todos los tiempos respecto a los tests anteriores de *P1-ejb*. Esto se debe a que en este caso, el cliente estaba en la misma máquina virtual que el servidor, ahorrándose así la comunicación por la red, entre otras muchas cosas, y optimizando el proceso a costa de ser un sistema menos distribuido. Tamien es mejor en este caso que la `P1-base` en el caso anterior pues en este caso la base de datos también se encentra desplegada en la misma máquina virtual.
+Como era de esperar, hay una reducción considerable en todos los tiempos respecto a los tests anteriores de *P1-ejb*. Esto se debe a que en este caso, el cliente estaba en la misma máquina virtual que el servidor, ahorrándose así la comunicación por la red, entre otras muchas cosas, y optimizando el proceso a costa de ser un sistema menos distribuido. También es mejor en este caso que la `P1-base` en el caso anterior pues en este caso la base de datos se encuentra desplegada en la misma máquina virtual.
 
 ### Ejercicio 4
 
@@ -85,11 +87,13 @@ Y en la salida miramos al valor de `ec`, que es el `error count`.
 
 ### Ejercicio 6
 
+Adjuntamos en la carpeta *Ejercicio6* los documentos *.nmon* de PC y máquina virtual junto con la captura del monitor que respaldan los resultados obtenidos.
+
 ![](./ej6_cpu.png)
 
 Observando los resultados, consideramos que el proceso consume más CPU que cualquier otro recursos, llegando a usar más del 80% del rendimiento de esta en algunos momentos. Para solucionar este problema, una posibilidad sería emplear otro esquema de despliegue que tenga una mayor distribución con el cliente y el servidor en 2 máquinas virtuales diferentes, como es el caso implementado en P1-ws, aunque este aumentaría el coste de tiempo al tener que enviarse las peticiones por la red.
 
-La situación simulada en este ejercico es muy poco realista debido a que durante la simulación JMeter usa un único hilo, por lo que se está imulando un caso en que únicamente hay 1 usuario conectado, mismo motivo por el que es normal que la cola no esté vacía.
+La situación simulada en este ejercicio es muy poco realista debido a que durante la simulación JMeter usa un único hilo, por lo que se está simulando un caso en que únicamente hay 1 usuario conectado, mismo motivo por el que es normal que la cola no esté vacía.
 
 ### Ejercicio 8
 
@@ -97,28 +101,50 @@ Tras realizar todos los pasos indicados en el enunciado para realizar la ejecuci
 
 ![](./tabla_rendimiento.png)
 
-Observando los resultados de la taba así como las siguentes gráficas resultantes:
+Observando los resultados de la taba así como las siguientes gráficas resultantes:
 
 ![](./graf_rendimiento.png)
 
 ![](./graf_latencia.png)
 
-Podemos extraer ciertas conclusiones acerca del proceso probado.
+Para respaldar todos los datos obtenidos en las pruebas, incluimos la carpeta *Ejercicio8* con la práctica. En esta carpeta hay una subcarpeta para cada uno de los tests que hemos ejecutado, cuyo nombre es *C\<NClientes>*. Dentro de cada una de estas subcarpetas se proporcionan capturas con los resultados de JMeter, de *monitor.sh* y los archivos *.nmon* obtenidos en el PC y en la máquina virtual, junto con una captura de NMonVisualizer de la CPU en la máquina virtual.
 
-A partir de 1750 hilos se puede ver como aumenta la latencia, con lo que a pesar de que la productividad sigue aumentando, las peticiones se resuelven cada vez más despacio.
+Comentar que a pesar de que la bajada de rendimiento que se puede apreciar a partir de los 2250 hilos es muy brusca, se han tomado varias pruebas y los resultados han sido siempre similares. Esto se debe probablemente a dos causas: por un lado, el servidor ha pasado ya la zona lineal de funcionamiento, con lo que el rendimiento crece mucho más despacio, y por otro lado, al tener que hacer la práctica en un único ordenador, que está usando dos máquinas virtuales y más de 2000 hilos, este se está saturando, cosa que se puede ver en los registros de CPU de la máquina virtual obtenidos por *nmon*, y de la RAM del PC host obtenidos por *nmon* también. 
 
-Desde 2000 a 2500 el rendimiento crece cada vez más lento. El cambio posterior es muy brusco, pero se han tomado varias pruebas y los resultados han sido en todos los casos muy similares.
-
-A partir de 2500 hilos se puede apreciar una bajada de rendimiento. Esto se debe probablemente a dos causas: por un lado, el servidor ha pasado ya la zona lineal de funcionamiento, y posiblemente la de transición, con lo que el rendimiento crece mucho más lento, y por otro lado, al tener que hacer la práctica en un único ordenador, que está usano dos máquinas virtuales y 2500 hilos, este se está saturando (para ver esto hay que mirar el nmon del ordenador en estas carpetas, observando como funciona la cpu en las de alrededor, y poniendo capturas que lo expliquen todo bien.)
-
-Con 3250 aparecen los primeros errores de sockets en JMeter, lo que significa que el servidor está saturado.
-
-Por tanto la región de saturación del servidor aparece alrededor de los 3250 usuarios concurrentes, aunque es dificil visualizarlo claramente en las gráficas debido a la caida en el rendimiento producida por realizar la prueba enteramente en un solo ordenador.
+Con 3250 aparecen los primeros errores de sockets en JMeter, lo que significa que el servidor está completamente saturado en nuestro caso, con lo que finalizamos las pruebas.
 
 ### Ejercicio 9
 
-A la vista de los resultados obtenidos en la curva del ejercicio anterior es complicado establecer el número de usuarios a partir del cual se inicia la región de saturación, debido a que a partir de cierto punto disminuye considerablemente el redimiento pues la práctica se realiza en un único ordenador y este llega por tanto antes de lo esperado al límite de su rendimiento. Por tanto estimamos que la región de saturación se encuentra a partir de los 3250 usuarios concurrentes, pues es cuando comienzan a aparecer errores de sockets en JMeter. En este punto el throughoutput total es de 342/s, que es a su vez el throughoutput más alto de la zona de saturación debido a que el rendimiento decrece por la saturación del único ordenador que ejecuta la práctica.
+> A partir de la curva obtenida, determinar para cuántos usuarios conectados se produce el punto de saturación, cuál es el throughput que se alcanza en ese punto, y cuál el throughput máximo que se obtiene en zona de saturación
 
-Observando los parámetros de monitorización, vemos que el que llega a su máximo en este punto es el número de conexiones a procesar simultńeamente por el servidor, es decil el `HTTP thread pool size` , por tanto este es el parámetro que se debería ampliar si se quiere que el punto de saturación se encuentre a partir de un número mayor de usuarios.
+A la vista de los resultados obtenidos en la curva del ejercicio anterior es complicado establecer el número de usuarios a partir del cual se inicia la región de saturación, debido a que a partir de cierto punto disminuye considerablemente el rendimiento pues la práctica se realiza en un único ordenador que tiene que ejecutar la máquina virtual en la que corre el servidor web que procesa todas las peticiones, y correr simultáneamente los hilos que hacen dichas peticiones, por lo que el servidor llega antes de lo esperado al límite de su rendimiento. 
 
-TODO: PROBARLO 
+Esto se puede apreciar claramente en los ficheros *.nmon* obtenidos para los valores más altos del número de clientes, donde se aprecia que la CPU de la máquina virtual está al límite de su capacidad (se muestra la captura con 3000 clientes).
+
+![](ej9_1.png)
+
+Otra forma de apreciar que el límite no está en el servidor web en sí, es ver la gráfica de latencia y tener en cuenta los datos obtenidos con el monitor: la cola del servidor no es el factor limitante en ningún momento, pues viendo las estadisticas devueltas por el monitor, hay una media de 500 clientes en cola, y el límite son 4096, aun así, se ve como la latencia alcanza un límite superior. Esto se debe a que el PC no puede correr todos los hilos de forma simultánea mientras ejecuta la máquina virtual.
+
+En nuestro caso concreto, a la vista de los datos mostrados en las tablas y gráficos del ejercicio anterior, el punto de saturación se encuentra entre los 2250 y 2500 usuarios, donde se alcanza el pico de máximo throughoutput, unos 660 peticiones/segundo, que se corresponde además con el valor máximo alcanzado en toda la zona de saturación, pues a partir de este punto empieza a decaer.
+
+A partir de estos datos, lo único que podemos hacer es elucubrar sobre cuál habría sido el comportamiento en la situación ideal en la que el servidor estuviese corriendo en un PC físico distinto. Para ello, observando las gráficas de throughoutput y de latencia, se aprecia que en el paso de 2000 a 2250 clientes, el crecimiento del throughoutput empieza a decaer lentamente, y la latencia crece, por lo que posiblemente el punto de saturación (en el caso en que el servidor corriese en un sistema independiente al de los clientes) estuviese alrededor de unos 3000 clientes. 
+
+En este caso, el throughoutput máximo se alcanzaría sin embargo cuando el número de clientes tendiese a infinito, en el punto en que el factor limitante del servidor fuesen las colas de espera, de forma que algunos de los clientes empezasen a quedar sin contestación. Este throughoutput máximo sería sin ninguna duda superior a los 660 clientes/segundo mencionados anteriormente.
+
+> Analizando los valores de monitorización que se han ido obteniendo durante la elaboración de la curva, sugerir el parámetro del servidor de aplicaciones que se cambiaría para obtener el punto de saturación en un número mayor de usuarios.
+
+Como hemos mencionado anteriormente, en nuestro caso el techo límite del servidor no se alcanza por el servidor en sí, si no por tener que correr simultáneamente en un mismo sistema todos los clientes que hacen las peticiones y el servidor que las contesta. Por tanto, a pesar de cambiar la configuración del servidor, es poco probable que consigamos mejorar significativamente su rendimiento.
+
+Sin embargo, observando los parámetros de monitorización, vemos que el que llega a su máximo en este punto es el número de conexiones a procesar simultáneamente por el servidor, es decir el `HTTP thread pool size` , por tanto este es el parámetro que se debería ampliar si se quiere que el punto de saturación se encuentre a partir de un número mayor de usuarios.
+
+> Realizar el ajuste correspondiente en el servidor de aplicaciones, reiniciarlo y tomar una nueva muestra cercana al punto de saturación. ¿Ha mejorado el rendimiento del sistema? Documente en la memoria de prácticas el cambio realizado y la mejora obtenida.
+
+Modificamos entonces dicho valor en el servidor GlassFish, extableciendo los parámetros Max Thread Pool Size y Min Thread Pool Size a 10 en vez de a los 5 anteriores. Tras esto, reiniciamos el servidor, borramos la base de datos desde Tora, y hacemos una prueba desde JMeter con 10 hilos para asegurar que el servidor estuviese completamente cargado y volvemos a borrar la base de datos.
+
+Ejecutamos entonces el test con los 2500 usuarios que han sido el punto en el que el sistema ha empezado a decaer, obteniendo los siguientes valores en JMeter:
+
+![](Ej9_3.png)
+
+Como podemos ver, el rendimiento ha bajado a pesar de haber aumentado el número de conexiones. Esto demuestra que el problema no es el servidor en sí, sino la saturación del PC Host al crear y gestionar los hilos con la máquina virtual. Se puede apreciar además que hemos obtenido dos errores de clientes a los que el servidor no ha respondido por estar saturado.
+
+Mencionar que tras extrañarnos estos resultados, hemos vuelto a establecer los valores modificados a los originales, reiniciado el servidor, hecho una prueba con un único cliente para asegurar que el servidor estuviese cargado completamente, y repetido la prueba con los 2500 hilos, obteniendo en este caso resultados muy similares a los mostrados en la tabla del ejercicio 8.
