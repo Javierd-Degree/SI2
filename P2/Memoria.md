@@ -1,3 +1,7 @@
+###### Javier Delgado del Cerro y Javier López Cano
+
+# Memoria Práctica 2 Si2
+
 ### Ejercicio 1
 
 Seguimos todos los pasos indicamos y generamos el archivo *P2.jmx* incluido en la práctica. En este archivo no aparece en *View Results Tree*, pues fue añadido y eliminado posteriormente como indica el enunciado.
